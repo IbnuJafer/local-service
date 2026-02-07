@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import ServiceForm from '@/components/ServiceForm';
 import { Trash2 } from 'lucide-react';
 
@@ -14,15 +14,20 @@ interface Service {
 export default function AdminPage() {
     const [services, setServices] = useState<Service[]>([]);
 
-    useEffect(() => {
-        fetchServices();
+    const fetchServices = useCallback(async () => {
+        try {
+            const res = await fetch('/api/services');
+            const data = await res.json();
+            if (data.success) setServices(data.data);
+        } catch (error) {
+            console.error('Failed to fetch services:', error);
+        }
     }, []);
 
-    const fetchServices = async () => {
-        const res = await fetch('/api/services');
-        const data = await res.json();
-        if (data.success) setServices(data.data);
-    };
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        fetchServices();
+    }, [fetchServices]);
 
     const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to delete this service?')) return;

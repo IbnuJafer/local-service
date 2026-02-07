@@ -50,8 +50,8 @@ export default function ServiceForm({ onServiceAdded }: ServiceFormProps) {
                 name: '', category: 'Clinic', phone: '', address: '', lat: '', lng: '', description: '', openingHours: '9:00 AM - 5:00 PM'
             });
             onServiceAdded();
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : 'An unknown error occurred');
         } finally {
             setLoading(false);
         }

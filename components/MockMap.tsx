@@ -6,7 +6,7 @@ interface MockMapProps {
     markers?: Array<{ id: string; lat: number; lng: number; title: string }>;
 }
 
-export default function MockMap({ center, zoom = 13, markers = [] }: MockMapProps) {
+export default function MockMap({ center, markers = [] }: MockMapProps) {
     return (
         <div className="w-full h-full bg-blue-50 relative overflow-hidden flex items-center justify-center border border-blue-100 rounded-lg">
             <div className="absolute inset-0 opacity-10"

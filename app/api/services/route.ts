@@ -38,7 +38,7 @@ export async function GET(request: Request) {
         const category = searchParams.get('category');
         const search = searchParams.get('search');
 
-        let query: any = {};
+        const query: Record<string, unknown> = {};
 
         if (category && category !== 'All') {
             query.category = category;
@@ -50,8 +50,9 @@ export async function GET(request: Request) {
 
         const services = await Service.find(query);
         return NextResponse.json({ success: true, data: services });
-    } catch (error) {
-        console.error('Database error, returning mock data:', error);
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error('Database error, returning mock data:', errorMessage);
         return NextResponse.json({ success: true, data: MOCK_SERVICES, note: 'Showing mock data due to DB connection issue' });
     }
 }
@@ -62,7 +63,7 @@ export async function POST(request: Request) {
         const body = await request.json();
         const service = await Service.create(body);
         return NextResponse.json({ success: true, data: service }, { status: 201 });
-    } catch (error) {
-        return NextResponse.json({ success: false, error: error }, { status: 400 });
+    } catch (error: unknown) {
+        return NextResponse.json({ success: false, error: error instanceof Error ? error.message : 'Unknown error' }, { status: 400 });
     }
 }

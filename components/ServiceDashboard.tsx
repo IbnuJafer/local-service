@@ -27,44 +27,44 @@ export default function ServiceDashboard() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const fetchServices = async () => {
+            try {
+                const res = await fetch('/api/services');
+                const data = await res.json();
+                if (data.success) {
+                    setServices(data.data);
+                }
+            } catch (error) {
+                console.error('Failed to fetch services:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         fetchServices();
     }, []);
 
     useEffect(() => {
+        const filterServices = () => {
+            let filtered = services;
+
+            if (selectedCategory !== 'All') {
+                filtered = filtered.filter(service => service.category === selectedCategory);
+            }
+
+            if (searchTerm) {
+                const lowerTerm = searchTerm.toLowerCase();
+                filtered = filtered.filter(service =>
+                    service.name.toLowerCase().includes(lowerTerm) ||
+                    service.description.toLowerCase().includes(lowerTerm)
+                );
+            }
+
+            setFilteredServices(filtered);
+        };
+
         filterServices();
     }, [searchTerm, selectedCategory, services]);
-
-    const fetchServices = async () => {
-        try {
-            const res = await fetch('/api/services');
-            const data = await res.json();
-            if (data.success) {
-                setServices(data.data);
-            }
-        } catch (error) {
-            console.error('Failed to fetch services:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const filterServices = () => {
-        let filtered = services;
-
-        if (selectedCategory !== 'All') {
-            filtered = filtered.filter(service => service.category === selectedCategory);
-        }
-
-        if (searchTerm) {
-            const lowerTerm = searchTerm.toLowerCase();
-            filtered = filtered.filter(service =>
-                service.name.toLowerCase().includes(lowerTerm) ||
-                service.description.toLowerCase().includes(lowerTerm)
-            );
-        }
-
-        setFilteredServices(filtered);
-    };
 
     const categories = ['All', 'Clinic', 'Mechanic', 'Pharmacy', 'Tutor', 'Other'];
 

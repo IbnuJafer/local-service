@@ -15,8 +15,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
             return NextResponse.json({ success: false }, { status: 404 });
         }
         return NextResponse.json({ success: true, data: service });
-    } catch (error) {
-        return NextResponse.json({ success: false, error: error }, { status: 400 });
+    } catch (error: unknown) {
+        return NextResponse.json({ success: false, error: error instanceof Error ? error.message : 'Unknown error' }, { status: 400 });
     }
 }
 
@@ -29,7 +29,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
             return NextResponse.json({ success: false }, { status: 404 });
         }
         return NextResponse.json({ success: true, data: {} });
-    } catch (error) {
-        return NextResponse.json({ success: false, error: error }, { status: 400 });
+    } catch (error: unknown) {
+        return NextResponse.json({ success: false, error: error instanceof Error ? error.message : 'Unknown error' }, { status: 400 });
     }
 }

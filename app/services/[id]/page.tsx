@@ -26,37 +26,26 @@ export default function ServiceDetails() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const fetchService = async () => {
+            try {
+                // app/api/services/route.ts -> GET handles search/category.
+                // app/api/services/[id]/route.ts -> PUT/DELETE/GET.
+                const resBetter = await fetch(`/api/services/${id}`);
+                const data = await resBetter.json();
+                if (data.success) {
+                    setService(data.data);
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
         if (id) {
             fetchService();
         }
     }, [id]);
-
-    const fetchService = async () => {
-        try {
-            const res = await fetch(`/api/services?id=${id}`); // Ideally fetch by ID directly, but our GET /api/services handles query params. 
-            // Actually, our API for single service is at /api/services/[id], but that's for PUT/DELETE. 
-            // We should probably update the GET to handle single ID or use the list endpoint with filter.
-            // Let's check our API implementation.
-            // app/api/services/route.ts -> GET handles search/category.
-            // app/api/services/[id]/route.ts -> PUT/DELETE.
-
-            // I missed adding GET to [id]/route.ts. I should fix that or filter from list.
-            // Filtering from list is inefficient but works for MVP. 
-            // Better: Add GET to [id]/route.ts.
-
-            // For now, let's fetch all and find (lazy MVP) or better, fix the API.
-            // I'll fix the API in the next step. For now, let's assume I will fix it.
-            const resBetter = await fetch(`/api/services/${id}`);
-            const data = await resBetter.json();
-            if (data.success) {
-                setService(data.data);
-            }
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     if (loading) return <div className="p-8 text-center">Loading service details...</div>;
     if (!service) return <div className="p-8 text-center">Service not found.</div>;
